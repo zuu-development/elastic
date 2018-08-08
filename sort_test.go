@@ -5,7 +5,10 @@
 package elastic
 
 import (
+	"context"
 	"encoding/json"
+	"log"
+	"os"
 	"testing"
 )
 
@@ -274,5 +277,27 @@ func TestFieldSortWithNestedSort(t *testing.T) {
 	expected := `{"offer.price":{"mode":"avg","nested":{"filter":{"term":{"offer.color":"blue"}},"path":"offer"},"order":"asc"}}`
 	if got != expected {
 		t.Errorf("expected\n%s\n,got:\n%s", expected, got)
+	}
+}
+
+func TestFieldSortIssue855(t *testing.T) {
+	client := setupTestClientAndCreateIndexAndAddDocs(t, SetTraceLog(log.New(os.Stdout, "", log.LstdFlags)))
+
+	ctx := context.Background()
+
+	sortField := NewFieldSort("field_unmapped").
+		Desc().
+		UnmappedType("long")
+	res, err := client.Search().
+		Index(testIndexName).
+		SortBy(sortField).
+		Size(1).
+		Pretty(true).
+		Do(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want, have := float64(-9223372036854775808), res.Hits.Hits[0].Sort[0]; want != have {
+		t.Fatalf("Sort: want %v, have %v", want, have)
 	}
 }
