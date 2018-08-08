@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"os"
 	"testing"
 )
@@ -283,8 +284,6 @@ func TestFieldSortWithNestedSort(t *testing.T) {
 func TestFieldSortIssue855(t *testing.T) {
 	client := setupTestClientAndCreateIndexAndAddDocs(t, SetTraceLog(log.New(os.Stdout, "", log.LstdFlags)))
 
-	ctx := context.Background()
-
 	sortField := NewFieldSort("field_unmapped").
 		Desc().
 		UnmappedType("long")
@@ -293,11 +292,27 @@ func TestFieldSortIssue855(t *testing.T) {
 		SortBy(sortField).
 		Size(1).
 		Pretty(true).
-		Do(ctx)
+		Do(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if want, have := float64(-9223372036854775808), res.Hits.Hits[0].Sort[0]; want != have {
+	if want, have := float64(math.MinInt64), res.Hits.Hits[0].Sort[0]; want != have {
+		t.Fatalf("Sort: want %v, have %v", want, have)
+	}
+
+	sortField = NewFieldSort("field_unmapped").
+		Asc().
+		UnmappedType("long")
+	res, err = client.Search().
+		Index(testIndexName).
+		SortBy(sortField).
+		Size(1).
+		Pretty(true).
+		Do(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want, have := float64(math.MaxInt64), res.Hits.Hits[0].Sort[0]; want != have {
 		t.Fatalf("Sort: want %v, have %v", want, have)
 	}
 }
