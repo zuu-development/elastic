@@ -1,7 +1,7 @@
 module github.com/olivere/elastic/v6
 
 require (
-	github.com/fortytw2/leaktest v1.2.0 // indirect
+	github.com/fortytw2/leaktest v1.2.0
 	github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pkg/errors v0.8.0
