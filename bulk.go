@@ -132,9 +132,7 @@ func (s *BulkService) Pretty(pretty bool) *BulkService {
 // Add adds bulkable requests, i.e. BulkIndexRequest, BulkUpdateRequest,
 // and/or BulkDeleteRequest.
 func (s *BulkService) Add(requests ...BulkableRequest) *BulkService {
-	for _, r := range requests {
-		s.requests = append(s.requests, r)
-	}
+	s.requests = append(s.requests, requests...)
 	return s
 }
 
@@ -145,12 +143,13 @@ func (s *BulkService) EstimatedSizeInBytes() int64 {
 		return s.sizeInBytes
 	}
 	for _, r := range s.requests[s.sizeInBytesCursor:] {
-		s.sizeInBytes += s.estimateSizeInBytes(r)
+		s.sizeInBytes += r.EstimatedSizeInBytes()
 		s.sizeInBytesCursor++
 	}
 	return s.sizeInBytes
 }
 
+/*
 // estimateSizeInBytes returns the estimates size of the given
 // bulkable request, i.e. BulkIndexRequest, BulkUpdateRequest, and
 // BulkDeleteRequest.
@@ -163,6 +162,7 @@ func (s *BulkService) estimateSizeInBytes(r BulkableRequest) int64 {
 	}
 	return int64(size)
 }
+*/
 
 // NumberOfActions returns the number of bulkable requests that need to
 // be sent to Elasticsearch on the next batch.

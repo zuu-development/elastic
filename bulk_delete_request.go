@@ -20,13 +20,14 @@ import (
 // for details.
 type BulkDeleteRequest struct {
 	BulkableRequest
-	index       string
-	typ         string
-	id          string
-	parent      string
-	routing     string
-	version     int64  // default is MATCH_ANY
-	versionType string // default is "internal"
+	estimatedSize int64
+	index         string
+	typ           string
+	id            string
+	parent        string
+	routing       string
+	version       int64  // default is MATCH_ANY
+	versionType   string // default is "internal"
 
 	source []string
 
@@ -58,6 +59,7 @@ func NewBulkDeleteRequest() *BulkDeleteRequest {
 // usage of unsafe etc. See https://github.com/mailru/easyjson#issues-notes-and-limitations
 // for details. This setting is disabled by default.
 func (r *BulkDeleteRequest) UseEasyJSON(enable bool) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.useEasyJSON = enable
 	return r
 }
@@ -65,6 +67,7 @@ func (r *BulkDeleteRequest) UseEasyJSON(enable bool) *BulkDeleteRequest {
 // Index specifies the Elasticsearch index to use for this delete request.
 // If unspecified, the index set on the BulkService will be used.
 func (r *BulkDeleteRequest) Index(index string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.index = index
 	r.source = nil
 	return r
@@ -73,6 +76,7 @@ func (r *BulkDeleteRequest) Index(index string) *BulkDeleteRequest {
 // Type specifies the Elasticsearch type to use for this delete request.
 // If unspecified, the type set on the BulkService will be used.
 func (r *BulkDeleteRequest) Type(typ string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.typ = typ
 	r.source = nil
 	return r
@@ -80,6 +84,7 @@ func (r *BulkDeleteRequest) Type(typ string) *BulkDeleteRequest {
 
 // Id specifies the identifier of the document to delete.
 func (r *BulkDeleteRequest) Id(id string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.id = id
 	r.source = nil
 	return r
@@ -88,6 +93,7 @@ func (r *BulkDeleteRequest) Id(id string) *BulkDeleteRequest {
 // Parent specifies the parent of the request, which is used in parent/child
 // mappings.
 func (r *BulkDeleteRequest) Parent(parent string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.parent = parent
 	r.source = nil
 	return r
@@ -95,6 +101,7 @@ func (r *BulkDeleteRequest) Parent(parent string) *BulkDeleteRequest {
 
 // Routing specifies a routing value for the request.
 func (r *BulkDeleteRequest) Routing(routing string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.routing = routing
 	r.source = nil
 	return r
@@ -103,6 +110,7 @@ func (r *BulkDeleteRequest) Routing(routing string) *BulkDeleteRequest {
 // Version indicates the version to be deleted as part of an optimistic
 // concurrency model.
 func (r *BulkDeleteRequest) Version(version int64) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.version = version
 	r.source = nil
 	return r
@@ -111,6 +119,7 @@ func (r *BulkDeleteRequest) Version(version int64) *BulkDeleteRequest {
 // VersionType can be "internal" (default), "external", "external_gte",
 // or "external_gt".
 func (r *BulkDeleteRequest) VersionType(versionType string) *BulkDeleteRequest {
+	r.estimatedSize = 0
 	r.versionType = versionType
 	r.source = nil
 	return r
@@ -163,4 +172,18 @@ func (r *BulkDeleteRequest) Source() ([]string, error) {
 	r.source = lines
 
 	return lines, nil
+}
+
+// EstimatedSizeInBytes returns the estimated size of the request in bytes.
+func (r *BulkDeleteRequest) EstimatedSizeInBytes() int64 {
+	if r.estimatedSize <= 0 {
+		lines, _ := r.Source()
+		size := 0
+		for _, line := range lines {
+			// +1 for the \n
+			size += len(line) + 1
+		}
+		r.estimatedSize = int64(size)
+	}
+	return r.estimatedSize
 }

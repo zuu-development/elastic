@@ -18,9 +18,10 @@ import (
 // for details.
 type BulkUpdateRequest struct {
 	BulkableRequest
-	index string
-	typ   string
-	id    string
+	estimatedSize int64
+	index         string
+	typ           string
+	id            string
 
 	routing         string
 	parent          string
@@ -78,6 +79,7 @@ func NewBulkUpdateRequest() *BulkUpdateRequest {
 // usage of unsafe etc. See https://github.com/mailru/easyjson#issues-notes-and-limitations
 // for details. This setting is disabled by default.
 func (r *BulkUpdateRequest) UseEasyJSON(enable bool) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.useEasyJSON = enable
 	return r
 }
@@ -85,6 +87,7 @@ func (r *BulkUpdateRequest) UseEasyJSON(enable bool) *BulkUpdateRequest {
 // Index specifies the Elasticsearch index to use for this update request.
 // If unspecified, the index set on the BulkService will be used.
 func (r *BulkUpdateRequest) Index(index string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.index = index
 	r.source = nil
 	return r
@@ -93,6 +96,7 @@ func (r *BulkUpdateRequest) Index(index string) *BulkUpdateRequest {
 // Type specifies the Elasticsearch type to use for this update request.
 // If unspecified, the type set on the BulkService will be used.
 func (r *BulkUpdateRequest) Type(typ string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.typ = typ
 	r.source = nil
 	return r
@@ -100,6 +104,7 @@ func (r *BulkUpdateRequest) Type(typ string) *BulkUpdateRequest {
 
 // Id specifies the identifier of the document to update.
 func (r *BulkUpdateRequest) Id(id string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.id = id
 	r.source = nil
 	return r
@@ -107,6 +112,7 @@ func (r *BulkUpdateRequest) Id(id string) *BulkUpdateRequest {
 
 // Routing specifies a routing value for the request.
 func (r *BulkUpdateRequest) Routing(routing string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.routing = routing
 	r.source = nil
 	return r
@@ -114,6 +120,7 @@ func (r *BulkUpdateRequest) Routing(routing string) *BulkUpdateRequest {
 
 // Parent specifies the identifier of the parent document (if available).
 func (r *BulkUpdateRequest) Parent(parent string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.parent = parent
 	r.source = nil
 	return r
@@ -124,6 +131,7 @@ func (r *BulkUpdateRequest) Parent(parent string) *BulkUpdateRequest {
 // and https://www.elastic.co/guide/en/elasticsearch/reference/6.2/modules-scripting.html
 // for details.
 func (r *BulkUpdateRequest) Script(script *Script) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.script = script
 	r.source = nil
 	return r
@@ -134,6 +142,7 @@ func (r *BulkUpdateRequest) Script(script *Script) *BulkUpdateRequest {
 //
 // See https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docs-update.html#_literal_scripted_upsert_literal
 func (r *BulkUpdateRequest) ScriptedUpsert(upsert bool) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.scriptedUpsert = &upsert
 	r.source = nil
 	return r
@@ -141,6 +150,7 @@ func (r *BulkUpdateRequest) ScriptedUpsert(upsert bool) *BulkUpdateRequest {
 
 // RetryOnConflict specifies how often to retry in case of a version conflict.
 func (r *BulkUpdateRequest) RetryOnConflict(retryOnConflict int) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.retryOnConflict = &retryOnConflict
 	r.source = nil
 	return r
@@ -149,6 +159,7 @@ func (r *BulkUpdateRequest) RetryOnConflict(retryOnConflict int) *BulkUpdateRequ
 // Version indicates the version of the document as part of an optimistic
 // concurrency model.
 func (r *BulkUpdateRequest) Version(version int64) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.version = version
 	r.source = nil
 	return r
@@ -157,6 +168,7 @@ func (r *BulkUpdateRequest) Version(version int64) *BulkUpdateRequest {
 // VersionType can be "internal" (default), "external", "external_gte",
 // or "external_gt".
 func (r *BulkUpdateRequest) VersionType(versionType string) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.versionType = versionType
 	r.source = nil
 	return r
@@ -164,6 +176,7 @@ func (r *BulkUpdateRequest) VersionType(versionType string) *BulkUpdateRequest {
 
 // Doc specifies the updated document.
 func (r *BulkUpdateRequest) Doc(doc interface{}) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.doc = doc
 	r.source = nil
 	return r
@@ -175,6 +188,7 @@ func (r *BulkUpdateRequest) Doc(doc interface{}) *BulkUpdateRequest {
 // See https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docs-update.html#_literal_doc_as_upsert_literal
 // for details.
 func (r *BulkUpdateRequest) DocAsUpsert(docAsUpsert bool) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.docAsUpsert = &docAsUpsert
 	r.source = nil
 	return r
@@ -184,6 +198,7 @@ func (r *BulkUpdateRequest) DocAsUpsert(docAsUpsert bool) *BulkUpdateRequest {
 // should be ignored (true) or unignored (false). This is enabled by default
 // in Elasticsearch.
 func (r *BulkUpdateRequest) DetectNoop(detectNoop bool) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.detectNoop = &detectNoop
 	r.source = nil
 	return r
@@ -192,6 +207,7 @@ func (r *BulkUpdateRequest) DetectNoop(detectNoop bool) *BulkUpdateRequest {
 // Upsert specifies the document to use for upserts. It will be used for
 // create if the original document does not exist.
 func (r *BulkUpdateRequest) Upsert(doc interface{}) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.upsert = doc
 	r.source = nil
 	return r
@@ -201,6 +217,7 @@ func (r *BulkUpdateRequest) Upsert(doc interface{}) *BulkUpdateRequest {
 // after the update. In the request, this responds to the `_source` field.
 // It is false by default.
 func (r *BulkUpdateRequest) ReturnSource(source bool) *BulkUpdateRequest {
+	r.estimatedSize = 0
 	r.returnSource = &source
 	r.source = nil
 	return r
@@ -311,4 +328,18 @@ func (r *BulkUpdateRequest) Source() ([]string, error) {
 
 	r.source = lines
 	return lines, nil
+}
+
+// EstimatedSizeInBytes returns the estimated size of the request in bytes.
+func (r *BulkUpdateRequest) EstimatedSizeInBytes() int64 {
+	if r.estimatedSize <= 0 {
+		lines, _ := r.Source()
+		size := 0
+		for _, line := range lines {
+			// +1 for the \n
+			size += len(line) + 1
+		}
+		r.estimatedSize = int64(size)
+	}
+	return r.estimatedSize
 }

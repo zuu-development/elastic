@@ -460,32 +460,32 @@ func TestBulkEstimatedSizeInBytes(t *testing.T) {
 			Retweets: 42,
 		})
 
-	bulkRequest := client.Bulk()
-	bulkRequest = bulkRequest.Add(index1Req)
-	bulkRequest = bulkRequest.Add(index2Req)
-	bulkRequest = bulkRequest.Add(delete1Req)
-	bulkRequest = bulkRequest.Add(update2Req)
+	bulkService := client.Bulk()
+	bulkService = bulkService.Add(index1Req)
+	bulkService = bulkService.Add(index2Req)
+	bulkService = bulkService.Add(delete1Req)
+	bulkService = bulkService.Add(update2Req)
 
-	if bulkRequest.NumberOfActions() != 4 {
-		t.Errorf("expected bulkRequest.NumberOfActions %d; got %d", 4, bulkRequest.NumberOfActions())
+	if bulkService.NumberOfActions() != 4 {
+		t.Errorf("expected bulkService.NumberOfActions %d; got %d", 4, bulkService.NumberOfActions())
 	}
 
 	// The estimated size of the bulk request in bytes must be at least
 	// the length of the body request.
-	raw, err := bulkRequest.bodyAsString()
+	raw, err := bulkService.bodyAsString()
 	if err != nil {
 		t.Fatal(err)
 	}
 	rawlen := int64(len([]byte(raw)))
 
-	if got, want := bulkRequest.EstimatedSizeInBytes(), rawlen; got < want {
+	if got, want := bulkService.EstimatedSizeInBytes(), rawlen; got < want {
 		t.Errorf("expected an EstimatedSizeInBytes = %d; got: %v", want, got)
 	}
 
 	// Reset should also reset the calculated estimated byte size
-	bulkRequest.Reset()
+	bulkService.Reset()
 
-	if got, want := bulkRequest.EstimatedSizeInBytes(), int64(0); got != want {
+	if got, want := bulkService.EstimatedSizeInBytes(), int64(0); got != want {
 		t.Errorf("expected an EstimatedSizeInBytes = %d; got: %v", want, got)
 	}
 }
@@ -495,7 +495,7 @@ func TestBulkEstimateSizeInBytesLength(t *testing.T) {
 	s := client.Bulk()
 	r := NewBulkDeleteRequest().Index(testIndexName).Type("doc").Id("1")
 	s = s.Add(r)
-	if got, want := s.estimateSizeInBytes(r), int64(1+len(r.String())); got != want {
+	if got, want := r.EstimatedSizeInBytes(), int64(1+len(r.String())); got != want {
 		t.Fatalf("expected %d; got: %d", want, got)
 	}
 }

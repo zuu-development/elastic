@@ -14,4 +14,5 @@ import (
 type BulkableRequest interface {
 	fmt.Stringer
 	Source() ([]string, error)
+	EstimatedSizeInBytes() int64
 }

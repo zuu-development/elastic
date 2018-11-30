@@ -18,6 +18,7 @@ import (
 // for details.
 type BulkIndexRequest struct {
 	BulkableRequest
+	estimatedSize   int64
 	index           string
 	typ             string
 	id              string
@@ -66,6 +67,7 @@ func NewBulkIndexRequest() *BulkIndexRequest {
 // usage of unsafe etc. See https://github.com/mailru/easyjson#issues-notes-and-limitations
 // for details. This setting is disabled by default.
 func (r *BulkIndexRequest) UseEasyJSON(enable bool) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.useEasyJSON = enable
 	return r
 }
@@ -73,6 +75,7 @@ func (r *BulkIndexRequest) UseEasyJSON(enable bool) *BulkIndexRequest {
 // Index specifies the Elasticsearch index to use for this index request.
 // If unspecified, the index set on the BulkService will be used.
 func (r *BulkIndexRequest) Index(index string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.index = index
 	r.source = nil
 	return r
@@ -81,6 +84,7 @@ func (r *BulkIndexRequest) Index(index string) *BulkIndexRequest {
 // Type specifies the Elasticsearch type to use for this index request.
 // If unspecified, the type set on the BulkService will be used.
 func (r *BulkIndexRequest) Type(typ string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.typ = typ
 	r.source = nil
 	return r
@@ -88,6 +92,7 @@ func (r *BulkIndexRequest) Type(typ string) *BulkIndexRequest {
 
 // Id specifies the identifier of the document to index.
 func (r *BulkIndexRequest) Id(id string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.id = id
 	r.source = nil
 	return r
@@ -98,6 +103,7 @@ func (r *BulkIndexRequest) Id(id string) *BulkIndexRequest {
 // See https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docs-index_.html#operation-type
 // for details.
 func (r *BulkIndexRequest) OpType(opType string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.opType = opType
 	r.source = nil
 	return r
@@ -105,6 +111,7 @@ func (r *BulkIndexRequest) OpType(opType string) *BulkIndexRequest {
 
 // Routing specifies a routing value for the request.
 func (r *BulkIndexRequest) Routing(routing string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.routing = routing
 	r.source = nil
 	return r
@@ -112,6 +119,7 @@ func (r *BulkIndexRequest) Routing(routing string) *BulkIndexRequest {
 
 // Parent specifies the identifier of the parent document (if available).
 func (r *BulkIndexRequest) Parent(parent string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.parent = parent
 	r.source = nil
 	return r
@@ -120,6 +128,7 @@ func (r *BulkIndexRequest) Parent(parent string) *BulkIndexRequest {
 // Version indicates the version of the document as part of an optimistic
 // concurrency model.
 func (r *BulkIndexRequest) Version(version int64) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.version = version
 	r.source = nil
 	return r
@@ -131,6 +140,7 @@ func (r *BulkIndexRequest) Version(version int64) *BulkIndexRequest {
 // See https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docs-index_.html#index-versioning
 // for details.
 func (r *BulkIndexRequest) VersionType(versionType string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.versionType = versionType
 	r.source = nil
 	return r
@@ -138,6 +148,7 @@ func (r *BulkIndexRequest) VersionType(versionType string) *BulkIndexRequest {
 
 // Doc specifies the document to index.
 func (r *BulkIndexRequest) Doc(doc interface{}) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.doc = doc
 	r.source = nil
 	return r
@@ -145,6 +156,7 @@ func (r *BulkIndexRequest) Doc(doc interface{}) *BulkIndexRequest {
 
 // RetryOnConflict specifies how often to retry in case of a version conflict.
 func (r *BulkIndexRequest) RetryOnConflict(retryOnConflict int) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.retryOnConflict = &retryOnConflict
 	r.source = nil
 	return r
@@ -152,6 +164,7 @@ func (r *BulkIndexRequest) RetryOnConflict(retryOnConflict int) *BulkIndexReques
 
 // Pipeline to use while processing the request.
 func (r *BulkIndexRequest) Pipeline(pipeline string) *BulkIndexRequest {
+	r.estimatedSize = 0
 	r.pipeline = pipeline
 	r.source = nil
 	return r
@@ -236,4 +249,18 @@ func (r *BulkIndexRequest) Source() ([]string, error) {
 
 	r.source = lines
 	return lines, nil
+}
+
+// EstimatedSizeInBytes returns the estimated size of the request in bytes.
+func (r *BulkIndexRequest) EstimatedSizeInBytes() int64 {
+	if r.estimatedSize <= 0 {
+		lines, _ := r.Source()
+		size := 0
+		for _, line := range lines {
+			// +1 for the \n
+			size += len(line) + 1
+		}
+		r.estimatedSize = int64(size)
+	}
+	return r.estimatedSize
 }
