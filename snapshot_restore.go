@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/v7/uritemplates"
+	"github.com/olivere/elastic/uritemplates"
 )
 
 // SnapshotRestoreService restores a snapshot from a snapshot repository.
