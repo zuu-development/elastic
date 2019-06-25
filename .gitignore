@@ -32,4 +32,5 @@ _testmain.go
 /spec
 /tmp
 /CHANGELOG-3.0.html
+vendor/
 
