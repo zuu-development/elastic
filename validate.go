@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/uritemplates"
+	"github.com/zuu-development/elastic/uritemplates"
 )
 
 // ValidateService allows a user to validate a potentially

@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/uritemplates"
+	"github.com/zuu-development/elastic/uritemplates"
 )
 
 // IndicesSyncedFlushService performs a normal flush, then adds a generated

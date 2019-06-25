@@ -18,8 +18,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/olivere/env"
 
-	"github.com/olivere/elastic"
-	aws "github.com/olivere/elastic/aws/v4"
+	"github.com/zuu-development/elastic"
+	aws "github.com/zuu-development/elastic/aws/v4"
 )
 
 func main() {
