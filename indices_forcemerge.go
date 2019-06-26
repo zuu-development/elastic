@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/v7/uritemplates"
+	"github.com/zuu-development/elastic/uritemplates"
 )
 
 // IndicesForcemergeService allows to force merging of one or more indices.

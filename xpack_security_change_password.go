@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/olivere/elastic/v7/uritemplates"
+	"github.com/zuu-development/elastic/uritemplates"
 )
 
 // XPackSecurityChangePasswordService changes a native user's password.

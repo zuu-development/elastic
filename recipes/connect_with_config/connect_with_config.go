@@ -17,8 +17,8 @@ import (
 	"log"
 	"runtime"
 
-	"github.com/olivere/elastic/v7"
-	"github.com/olivere/elastic/v7/config"
+	"github.com/zuu-development/elastic"
+	"github.com/zuu-development/elastic/config"
 )
 
 func main() {

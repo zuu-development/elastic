@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/v7/uritemplates"
+	"github.com/zuu-development/elastic/uritemplates"
 )
 
 // IndicesPutMappingService allows to register specific mapping definition

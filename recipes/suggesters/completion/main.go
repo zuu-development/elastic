@@ -23,7 +23,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/olivere/elastic/v7"
+	"github.com/zuu-development/elastic"
 )
 
 const (
